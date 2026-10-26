@@ -1,0 +1,214 @@
+{
+  "info": {
+    "_postman_id": "b6c19f7e-8e61-4db9-9f5c-1b89d1d00001",
+    "name": "QA API Basics - JSONPlaceholder",
+    "description": "PT-BR/EN: Coleção de estudo para validar endpoints REST públicos. Study collection for validating public REST endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET - Existing post / Post existente",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts/1",
+          "protocol": "https",
+          "host": [
+            "jsonplaceholder",
+            "typicode",
+            "com"
+          ],
+          "path": [
+            "posts",
+            "1"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 / Status HTTP é 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response is JSON / Resposta é JSON', function () { pm.response.to.be.json; });",
+              "pm.test('Required fields exist / Campos obrigatórios existem', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.have.property('userId');",
+              "  pm.expect(body).to.have.property('id', 1);",
+              "  pm.expect(body).to.have.property('title').that.is.a('string');",
+              "  pm.expect(body).to.have.property('body').that.is.a('string');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET - Missing post / Post inexistente",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts/999999",
+          "protocol": "https",
+          "host": [
+            "jsonplaceholder",
+            "typicode",
+            "com"
+          ],
+          "path": [
+            "posts",
+            "999999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Missing resource returns 404 / Recurso inexistente retorna 404', function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET - Filter posts by userId / Filtrar posts por userId",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts?userId=1",
+          "protocol": "https",
+          "host": [
+            "jsonplaceholder",
+            "typicode",
+            "com"
+          ],
+          "path": [
+            "posts"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 / Status HTTP é 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response is an array / Resposta é um array', function () { pm.expect(pm.response.json()).to.be.an('array'); });",
+              "pm.test('All results belong to user 1 / Todos os resultados pertencem ao usuário 1', function () {",
+              "  pm.response.json().forEach(function (post) { pm.expect(post.userId).to.eql(1); });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST - Create simulated post / Criar post simulado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"QA portfolio test\",\n  \"body\": \"Created by Postman test\",\n  \"userId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts",
+          "protocol": "https",
+          "host": [
+            "jsonplaceholder",
+            "typicode",
+            "com"
+          ],
+          "path": [
+            "posts"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201 / Status HTTP é 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('Response contains submitted title / Resposta contém título enviado', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.title).to.eql('QA portfolio test');",
+              "  pm.expect(body.userId).to.eql(1);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET - Comments for post 1 / Comentários do post 1",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/comments?postId=1",
+          "protocol": "https",
+          "host": [
+            "jsonplaceholder",
+            "typicode",
+            "com"
+          ],
+          "path": [
+            "comments"
+          ],
+          "query": [
+            {
+              "key": "postId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 / Status HTTP é 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response is an array / Resposta é um array', function () { pm.expect(pm.response.json()).to.be.an('array'); });",
+              "pm.test('Each comment belongs to post 1 / Cada comentário pertence ao post 1', function () {",
+              "  pm.response.json().forEach(function (comment) { pm.expect(comment.postId).to.eql(1); });",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
